@@ -1,16 +1,26 @@
 package br.edu.unisep.tads.ifud.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
@@ -26,13 +36,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuario", 
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "nome"),
+        @UniqueConstraint(columnNames = "email")
+    })
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = { "id" })
+
 public class Usuario {
 
     @Id
@@ -40,13 +55,25 @@ public class Usuario {
     private Long id;
 
     @Column(name = "nome", nullable = false, length = 50)
+    @Size(max = 50)
     private String nome;
 
     @Column(name = "email", nullable = false, length = 150)
+    @NotBlank
+    @Size(max=150)
+    @Email
     private String email;
 
     @Column(name = "senha", nullable = false, length = 50)
+    @NotBlank
+    @Size(max = 50)
     private String senha;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "usuario_roles", 
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
     @CreatedBy
