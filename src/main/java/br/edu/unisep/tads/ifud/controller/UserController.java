@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.unisep.tads.ifud.exception.ResourceNotFoundException;
-import br.edu.unisep.tads.ifud.model.Usuario;
-import br.edu.unisep.tads.ifud.repository.UsuarioRepository;
+import br.edu.unisep.tads.ifud.model.User;
+import br.edu.unisep.tads.ifud.repository.UserRepository;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,41 +23,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1")
-public class UsuarioController {
+public class UserController {
     
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
     @GetMapping("/usuario")
-    public List<Usuario> getAllUsuarios() {
+    public List<User> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
     
     @GetMapping("/usuario/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(
+    public ResponseEntity<User> getUsuarioById(
             @PathVariable(value = "id") Long usuarioId) throws ResourceNotFoundException {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        User usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuario nao encontrada: " + usuarioId));
         return ResponseEntity.ok().body(usuario);
     }
 
     @PostMapping("/usuario")
-    public Usuario createUsuario(@RequestBody Usuario usuario) {
+    public User createUsuario(@RequestBody User usuario) {
         return usuarioRepository.save(usuario);
     }
 
     @PutMapping("/usuario/{id}")
-    public ResponseEntity<Usuario> updateUsuario(
+    public ResponseEntity<User> updateUsuario(
             @PathVariable(value = "id") Long usuarioId,
-            @RequestBody Usuario detalhes) throws ResourceNotFoundException {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+            @RequestBody User detalhes) throws ResourceNotFoundException {
+        User usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuario nao encontrada: " + usuarioId));
-        usuario.setNome(detalhes.getNome());
+        usuario.setUsername(detalhes.getUsername());
         usuario.setEmail(detalhes.getEmail());
-        usuario.setSenha(detalhes.getSenha());
-        Usuario usuarioUpdate = usuarioRepository.save(usuario);
+        usuario.setPassword(detalhes.getPassword());
+        User usuarioUpdate = usuarioRepository.save(usuario);
         return ResponseEntity.ok(usuarioUpdate);
     }
 
@@ -65,7 +65,7 @@ public class UsuarioController {
     public Map<String, Boolean> deleteUsuario(
             @PathVariable(value = "id") Long usuarioId
             ) throws Exception {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        User usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuario nao encontrada: " + usuarioId));
         usuarioRepository.delete(usuario);

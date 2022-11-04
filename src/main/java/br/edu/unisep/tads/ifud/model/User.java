@@ -38,7 +38,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "usuario", 
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = "nome"),
+        @UniqueConstraint(columnNames = "username"),
         @UniqueConstraint(columnNames = "email")
     })
 @EntityListeners(AuditingEntityListener.class)
@@ -47,8 +47,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = { "id" })
-
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO )
@@ -56,7 +55,7 @@ public class Usuario {
 
     @Column(name = "nome", nullable = false, length = 50)
     @Size(max = 50)
-    private String nome;
+    private String username;
 
     @Column(name = "email", nullable = false, length = 150)
     @NotBlank
@@ -67,7 +66,7 @@ public class Usuario {
     @Column(name = "senha", nullable = false, length = 50)
     @NotBlank
     @Size(max = 50)
-    private String senha;
+    private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "usuario_roles", 
@@ -95,4 +94,11 @@ public class Usuario {
     @ColumnDefault("current_timestamp")
     private Date updatedDate;
 
+
+    
+  public User(String username, String email, String password) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+  }
 }
